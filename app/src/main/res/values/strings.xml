@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">CityTask</string>
+
+    <string name="login"> Login</string>
+    <string name="city">City</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="sign_up">Sign up</string>
+
+    <string name="long_text_description">Aspen is as close as one can get to a storybook alpine town in America.
+        The choose-your-own-adventure possibilities—skiing, hiking, dining shopping and Aspen is as close as one can get to
+        a storybook alpine town in America. The choose-your-own-adventure possibilities—skiing, hiking, dining shopping and Aspen is
+        as close as one can get to a storybook alpine town in America.
+    </string>
+    <string name="comming_soon">Comming Soon</string>
+    <string name="refresh">Refresh</string>
+    <string name="review_number">300 Reviews</string>
+    <string name="city_name">Coeurdes Alpes</string>
+    <string name="don_t_have_an_account_yet_sign_up">Don’t have an account yet?</string>
+    <string name="already_have_an_account">Already have an account?</string>
+
+    <string name="privacy_policy">By signing up, you agree to the Terms of Service and Privacy Policy</string>
+    <string name="popular_cities">Popular Cities</string>
+    <string name="create_your_account_and_follow">Create your personal profile.com and follow</string>
+    <string name="enter_personal_info_to_login">Enter to your personal profile.com and follow</string>
+    <string name="aspen">Aspen</string>
+
+    <string name="plan_your">Plan your</string>
+    <string name="luxurious_vacation">Luxurious Vacation</string>
+    <string name="explore">Explore</string>
+</resources>
