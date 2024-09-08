@@ -78,7 +78,8 @@ fun CustomTextField(
     modifier: Modifier = Modifier,
     placeholder: String,
     trailingIcon: @Composable (() -> Unit),
-    visualTransformation: VisualTransformation = VisualTransformation.None
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    isError:Boolean
 ) {
     OutlinedTextField(
         value = value,
@@ -93,6 +94,7 @@ fun CustomTextField(
         ),
         shape = RoundedCornerShape(8.dp),
         trailingIcon = { trailingIcon() },
-        visualTransformation = visualTransformation
+        visualTransformation = visualTransformation,
+        isError = isError
     )
 }

@@ -49,6 +49,7 @@ import com.projects.citytask.presentation.components.CustomTextHeader
 import com.projects.citytask.presentation.components.CustomTextSmall
 import com.projects.citytask.presentation.screen.authentication.AuthViewModel
 import com.projects.citytask.presentation.util.Screen
+import com.projects.citytask.presentation.util.isValidEmail
 
 
 @Composable
@@ -73,6 +74,8 @@ fun SignUpScreen(navHostController: NavHostController) {
     var city by remember {
         mutableStateOf("")
     }
+    var emailError by remember { mutableStateOf(false) }
+    var passwordError by remember { mutableStateOf(false) }
 
     val scrollState = rememberScrollState()
 
@@ -127,20 +130,13 @@ fun SignUpScreen(navHostController: NavHostController) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-//            CustomTextSmall(text = stringResource(id = R.string.phone_number))
-
-//            CustomTextField(
-//                value = phoneNumber, onValueChange = { phoneNumber = it },
-//                placeholder = stringResource(id = R.string.phone_number),trailingIcon = {}
-//            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
             CustomTextSmall(text = stringResource(id = R.string.name))
 
             CustomTextField(
                 value = name, onValueChange = { name = it },
-                placeholder = stringResource(id = R.string.name), trailingIcon = {}
+                placeholder = stringResource(id = R.string.name),
+                trailingIcon = {},
+                isError = false
             )
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -148,19 +144,29 @@ fun SignUpScreen(navHostController: NavHostController) {
 
             CustomTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = {
+                    email = it
+                    emailError = !isValidEmail(email)
+                },
                 placeholder = stringResource(id = R.string.email),
                 trailingIcon = {},
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                isError = emailError
             )
-
+            if (emailError) {
+                Text(text = "Invalid email", color = Color.Red)
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
             CustomTextSmall(text = stringResource(id = R.string.password))
 
             CustomTextField(
-                value = password, onValueChange = { password = it },
+                value = password,
+                onValueChange = {
+                    password = it
+                    passwordError = password.length <= 5
+                },
                 placeholder = stringResource(id = R.string.password),
                 trailingIcon = {
                     IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
@@ -173,12 +179,21 @@ fun SignUpScreen(navHostController: NavHostController) {
                     }
                 },
                 visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                isError = passwordError
 
             )
+            if (passwordError) {
+                Text(text = "Password must be more than 5 characters", color = Color.Red)
+            }
             Spacer(modifier = Modifier.height(8.dp))
 
             CustomButton(text = stringResource(id = R.string.sign_up)) {
-                viewModel.signUp(name, email, password)
+                if (!emailError && !passwordError)
+                    viewModel.signUp(name, email, password)
+                else
+                    Toast.makeText(context,"Enter the Field Correctly",Toast.LENGTH_LONG).show()
+
+
             }
             Spacer(modifier = Modifier.height(16.dp))
 

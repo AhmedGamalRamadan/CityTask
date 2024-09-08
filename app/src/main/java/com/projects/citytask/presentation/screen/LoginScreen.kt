@@ -45,6 +45,7 @@ import com.projects.citytask.presentation.components.CustomTextHeader
 import com.projects.citytask.presentation.components.CustomTextSmall
 import com.projects.citytask.presentation.screen.authentication.AuthViewModel
 import com.projects.citytask.presentation.util.Screen
+import com.projects.citytask.presentation.util.isValidEmail
 
 
 @Composable
@@ -54,6 +55,10 @@ fun LoginScreen(navHostController: NavHostController) {
     val loginResult by viewModel.loginResult.collectAsState()
 
     val context = LocalContext.current
+
+    var emailError by remember { mutableStateOf(false) }
+    var passwordError by remember { mutableStateOf(false) }
+
     var email by remember {
         mutableStateOf("")
     }
@@ -97,15 +102,26 @@ fun LoginScreen(navHostController: NavHostController) {
 
         CustomTextSmall(text = stringResource(id = R.string.email))
         CustomTextField(
-            value = email, onValueChange = { email = it },
-            placeholder = stringResource(id = R.string.email), trailingIcon = {}
+            value = email,
+            onValueChange = {
+                email = it
+                emailError = !isValidEmail(email)
+            },
+            placeholder = stringResource(id = R.string.email), trailingIcon = {},
+            isError = emailError
         )
 
+        if (emailError) {
+            Text(text = "Invalid email", color = Color.Red)
+        }
 
         CustomTextSmall(text = stringResource(id = R.string.password))
         CustomTextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = {
+                password = it
+                passwordError = password.length <= 5
+            },
             placeholder = stringResource(id = R.string.password),
             trailingIcon = {
                 IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
@@ -117,16 +133,24 @@ fun LoginScreen(navHostController: NavHostController) {
                 }
             },
             visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            isError = passwordError
         )
 
+        if (passwordError) {
+            Text(text = "Password must be more than 5 characters", color = Color.Red)
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
 
         CustomButton(text = stringResource(id = R.string.login)) {
 
-            viewModel.login(email, password)
+            if (!emailError && !passwordError) 
+                viewModel.login(email, password)
+            else
+                Toast.makeText(context,"Enter the Field Correctly",Toast.LENGTH_LONG).show()
+
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -150,10 +174,15 @@ fun LoginScreen(navHostController: NavHostController) {
 
         loginResult?.let {
             if (it.isSuccess) {
-                Toast.makeText(context, stringResource(R.string.login_successful), Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    context,
+                    stringResource(R.string.login_successful),
+                    Toast.LENGTH_LONG
+                ).show()
                 navHostController.navigate(Screen.Home.rout)
             } else {
-                Toast.makeText(context,"${it.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "${it.exceptionOrNull()?.message}", Toast.LENGTH_LONG)
+                    .show()
                 Text("Login Failed: ${it.exceptionOrNull()?.message}")
             }
         }
