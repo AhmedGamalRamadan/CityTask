@@ -1,4 +1,4 @@
-package com.projects.citytask.ui.theme
+package com.projects.citytask.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

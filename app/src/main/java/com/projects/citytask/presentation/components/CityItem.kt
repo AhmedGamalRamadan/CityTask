@@ -22,7 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.projects.citytask.model.City
+import com.projects.citytask.domain.model.City
 import com.projects.citytask.presentation.util.Screen
 
 @Composable

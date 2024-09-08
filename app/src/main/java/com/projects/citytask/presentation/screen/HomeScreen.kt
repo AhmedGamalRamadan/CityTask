@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.projects.citytask.R
-import com.projects.citytask.model.City
+import com.projects.citytask.domain.model.City
 import com.projects.citytask.presentation.components.CityItem
 
 @Composable

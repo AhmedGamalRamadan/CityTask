@@ -1,6 +1,7 @@
 package com.projects.citytask.presentation.screen
 
 import android.app.Activity
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,21 +40,26 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.projects.citytask.R
 import com.projects.citytask.presentation.components.CustomButton
 import com.projects.citytask.presentation.components.CustomTextField
 import com.projects.citytask.presentation.components.CustomTextHeader
 import com.projects.citytask.presentation.components.CustomTextSmall
+import com.projects.citytask.presentation.screen.authentication.AuthViewModel
 import com.projects.citytask.presentation.util.Screen
 
 
 @Composable
 fun SignUpScreen(navHostController: NavHostController) {
 
+    val viewModel: AuthViewModel = hiltViewModel()
+    val signUpResult by viewModel.signUpResult.collectAsState()
+
     val context = LocalContext.current
 
-    var phoneNumber by remember {
+    var name by remember {
         mutableStateOf("")
     }
 
@@ -120,29 +127,41 @@ fun SignUpScreen(navHostController: NavHostController) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            CustomTextSmall(text = stringResource(id = R.string.phone_number))
+//            CustomTextSmall(text = stringResource(id = R.string.phone_number))
+
+//            CustomTextField(
+//                value = phoneNumber, onValueChange = { phoneNumber = it },
+//                placeholder = stringResource(id = R.string.phone_number),trailingIcon = {}
+//            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            CustomTextSmall(text = stringResource(id = R.string.name))
 
             CustomTextField(
-                value = phoneNumber, onValueChange = { phoneNumber = it },
-                placeholder = stringResource(id = R.string.phone_number),trailingIcon = {}
+                value = name, onValueChange = { name = it },
+                placeholder = stringResource(id = R.string.name), trailingIcon = {}
             )
-
             Spacer(modifier = Modifier.height(8.dp))
 
             CustomTextSmall(text = stringResource(id = R.string.email))
 
             CustomTextField(
-                value = email, onValueChange = { email = it },
-                placeholder = stringResource(id = R.string.email),trailingIcon = {}
+                value = email,
+                onValueChange = { email = it },
+                placeholder = stringResource(id = R.string.email),
+                trailingIcon = {},
+                modifier = Modifier.fillMaxWidth()
             )
+
+
             Spacer(modifier = Modifier.height(8.dp))
 
             CustomTextSmall(text = stringResource(id = R.string.password))
 
             CustomTextField(
-                value = password,
-                onValueChange = { password = it },
-                placeholder =stringResource(id = R.string.password),
+                value = password, onValueChange = { password = it },
+                placeholder = stringResource(id = R.string.password),
                 trailingIcon = {
                     IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                         Icon(
@@ -154,23 +173,12 @@ fun SignUpScreen(navHostController: NavHostController) {
                     }
                 },
                 visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth()
-            )
 
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            CustomTextSmall(text = stringResource(id = R.string.city))
-
-            CustomTextField(
-                value = city, onValueChange = { city = it },
-                placeholder = stringResource(id = R.string.city), trailingIcon = {}
             )
             Spacer(modifier = Modifier.height(8.dp))
 
             CustomButton(text = stringResource(id = R.string.sign_up)) {
-
-                navHostController.navigate(Screen.Home.rout)
+                viewModel.signUp(name, email, password)
             }
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -191,6 +199,15 @@ fun SignUpScreen(navHostController: NavHostController) {
                     }
             )
 
+        }
+        signUpResult?.let {
+            if (it.isSuccess) {
+                Text("Sign Up Successful")
+                navHostController.navigate(Screen.Home.rout)
+            } else {
+                Toast.makeText(context, "${it.exceptionOrNull()?.message}", Toast.LENGTH_LONG)
+                    .show()
+            }
         }
     }
 

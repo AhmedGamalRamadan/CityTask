@@ -1,6 +1,7 @@
 package com.projects.citytask.presentation.screen
 
 import android.app.Activity
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,20 +36,25 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.projects.citytask.R
 import com.projects.citytask.presentation.components.CustomButton
 import com.projects.citytask.presentation.components.CustomTextField
 import com.projects.citytask.presentation.components.CustomTextHeader
 import com.projects.citytask.presentation.components.CustomTextSmall
+import com.projects.citytask.presentation.screen.authentication.AuthViewModel
 import com.projects.citytask.presentation.util.Screen
 
 
 @Composable
 fun LoginScreen(navHostController: NavHostController) {
 
+    val viewModel: AuthViewModel = hiltViewModel()
+    val loginResult by viewModel.loginResult.collectAsState()
+
     val context = LocalContext.current
-    var phoneNumber by remember {
+    var email by remember {
         mutableStateOf("")
     }
 
@@ -69,14 +76,18 @@ fun LoginScreen(navHostController: NavHostController) {
     ) {
 
 
-    Box(modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center){
-        
-        Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_union),
-            contentDescription ="Logo" ,
-            tint = Color.Blue)
-    }
-    Spacer(modifier = Modifier.height(22.dp))
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_union),
+                contentDescription = "Logo",
+                tint = Color.Blue
+            )
+        }
+        Spacer(modifier = Modifier.height(22.dp))
 
         CustomTextHeader(text = stringResource(id = R.string.login))
 
@@ -84,10 +95,10 @@ fun LoginScreen(navHostController: NavHostController) {
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        CustomTextSmall(text = stringResource(id = R.string.phone_number))
+        CustomTextSmall(text = stringResource(id = R.string.email))
         CustomTextField(
-            value = phoneNumber, onValueChange = { phoneNumber = it },
-            placeholder = stringResource(id = R.string.phone_number),trailingIcon = {}
+            value = email, onValueChange = { email = it },
+            placeholder = stringResource(id = R.string.email), trailingIcon = {}
         )
 
 
@@ -95,7 +106,7 @@ fun LoginScreen(navHostController: NavHostController) {
         CustomTextField(
             value = password,
             onValueChange = { password = it },
-            placeholder =stringResource(id = R.string.password),
+            placeholder = stringResource(id = R.string.password),
             trailingIcon = {
                 IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                     Icon(
@@ -115,7 +126,7 @@ fun LoginScreen(navHostController: NavHostController) {
 
         CustomButton(text = stringResource(id = R.string.login)) {
 
-            navHostController.navigate(Screen.Home.rout)
+            viewModel.login(email, password)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -136,6 +147,16 @@ fun LoginScreen(navHostController: NavHostController) {
                     navHostController.navigate(Screen.SignUp.rout)
                 }
         )
+
+        loginResult?.let {
+            if (it.isSuccess) {
+                Toast.makeText(context, stringResource(R.string.login_successful), Toast.LENGTH_LONG).show()
+                navHostController.navigate(Screen.Home.rout)
+            } else {
+                Toast.makeText(context,"${it.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
+                Text("Login Failed: ${it.exceptionOrNull()?.message}")
+            }
+        }
     }
     BackHandler {
         (context as Activity).finish()

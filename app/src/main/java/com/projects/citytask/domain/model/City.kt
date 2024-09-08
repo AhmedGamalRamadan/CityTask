@@ -1,4 +1,4 @@
-package com.projects.citytask.model
+package com.projects.citytask.domain.model
 
 import androidx.annotation.DrawableRes
 

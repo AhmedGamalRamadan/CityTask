@@ -29,4 +29,6 @@
     <string name="plan_your">Plan your</string>
     <string name="luxurious_vacation">Luxurious Vacation</string>
     <string name="explore">Explore</string>
+    <string name="login_successful">Login Successful</string>
+    <string name="name">Name</string>
 </resources>
